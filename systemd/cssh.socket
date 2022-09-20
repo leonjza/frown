@@ -1,0 +1,6 @@
+[Unit]
+Description=SSH socket
+
+[Socket]
+ListenStream=0.0.0.0:24
+Accept=yes

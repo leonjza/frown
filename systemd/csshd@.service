@@ -1,0 +1,7 @@
+[Unit]
+Description=sshd container
+
+[Service]
+ExecStart=-/usr/bin/docker run --rm -i frown:local
+StandardInput=socket
+StandardError=syslog

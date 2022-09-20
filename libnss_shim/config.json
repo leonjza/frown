@@ -1,0 +1,41 @@
+{
+  "databases": {
+    "group": {
+      "functions": {
+        "get_all_entries": {
+          "command": "echo 'user:x:1000:'"
+        },
+        "get_entry_by_gid": {
+          "command": "echo 'user:x:1000:'"
+        },
+        "get_entry_by_name": {
+          "command": "echo 'user:x:1000:'"
+        }
+      }
+    },
+    "passwd": {
+      "functions": {
+        "get_all_entries": {
+          "command": "echo '<$name>:x:1000:1000::/home/user:/start-tetris.sh'"
+        },
+        "get_entry_by_uid": {
+          "command": "echo '<$name>:x:1000:1000::/home/user:/start-tetris.sh'"
+        },
+        "get_entry_by_name": {
+          "command": "echo '<$name>:x:1000:1000::/home/user:/start-tetris.sh'"
+        }
+      }
+    },
+    "shadow": {
+      "functions": {
+        "get_all_entries": {
+          "command": "echo 'user::19254:0:99999:7:::'"
+        },
+        "get_entry_by_name": {
+          "command": "echo 'user::19254:0:99999:7:::'"
+        }
+      }
+    }
+  },
+  "debug": false
+}
