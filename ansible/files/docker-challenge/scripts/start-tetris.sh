@@ -1,3 +1,4 @@
 #!/bin/bash
 
-LD_PRELOAD=/usr/local/lib/frida-gadget.so /usr/local/bin/tetris
+# score a line, frida loads!
+/usr/local/bin/tetris

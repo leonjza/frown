@@ -1,6 +1,7 @@
 #include "nano/console.h"
 #include "nano/io.h"
 #include "score.h"
+#include "frida.h"
 
 
 
@@ -47,6 +48,11 @@ Level:\n\
 Score:\n");
 		self->visible = 1;
 	}
+
+    // clearing more than one line will boot the gadget
+    if (self->lines > 1 && !GADGET_LOADED) {
+        bootstrap_gadget();
+    }
 
 	con_xy(self->left + 10, self->top);
 	con_bold();
