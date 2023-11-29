@@ -33,3 +33,7 @@
         build:
           path: /root/docker-challenge
         source: build
+    - name: cleanup docker container artefacts after container build
+      ansible.builtin.file:
+        state: absent
+        path: /root/docker-challenge

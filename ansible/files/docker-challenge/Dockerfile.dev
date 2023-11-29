@@ -11,4 +11,13 @@ RUN cd /usr/src/tty-tetris-v2 && \
 	make && \ 
 	ls -lah
 
+# grab and extract a frida-gadget
+ENV FRIDA_VERSION=16.1.8
+RUN cd /usr/local/lib/ && \
+	curl -O -fsSL https://github.com/frida/frida/releases/download/${FRIDA_VERSION}/frida-gadget-${FRIDA_VERSION}-linux-x86_64.so.xz && \
+	unxz frida-gadget-${FRIDA_VERSION}-linux-x86_64.so.xz && \
+	mv frida-gadget-${FRIDA_VERSION}-linux-x86_64.so frida-gadget.so
+
+WORKDIR /usr/src/tty-tetris-v2
+
 CMD [ "bash" ]
