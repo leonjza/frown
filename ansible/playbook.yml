@@ -1,0 +1,34 @@
+- name: setup the frown challenge
+  hosts: all
+  become: yes
+  roles:
+    # a sane way to get docker installed and configured
+    - geerlingguy.docker
+  tasks:
+    # systemd socket activation configuration
+    - name: copy over systemd container ssh socket file
+      template:
+        src: cssh.socket.j2
+        dest: /usr/lib/systemd/system/cssh.socket
+    - name: copy over systemd container ssh service file
+      template:
+        src: csshd@.service.j2
+        dest: /usr/lib/systemd/system/csshd@.service
+    - name: enable the cssh.socket service
+      ansible.builtin.systemd_service:
+        enabled: true
+        state: started
+        name: cssh.socket
+
+    # prepare and build the docker container spawned via socket activation
+    - name: copy docker container artefacts to host
+      ansible.builtin.copy:
+        mode: preserve
+        src: docker-challenge/
+        dest: /root/docker-challenge
+    - name: build challenge docker container
+      community.docker.docker_image:
+        name: '{{ container_name }}'
+        build:
+          path: /root/docker-challenge
+        source: build

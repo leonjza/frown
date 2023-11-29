@@ -1,0 +1,7 @@
+# the port that ssh connections should be accepted on
+# to start the challenge
+container_ssh_port: 24
+
+# the name of the challenge container that will be spawned
+# when a new ssh connection comes in
+container_name: frown:local

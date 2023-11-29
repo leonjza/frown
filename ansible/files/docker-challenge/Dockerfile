@@ -1,25 +1,27 @@
 FROM debian:bookworm-slim as tetris
 
 RUN apt update && apt install -y --no-install-recommends \
-	ca-certificates curl git make g++ libncurses-dev xz-utils
+	ca-certificates curl git cmake make g++ libncurses-dev xz-utils
 
-# build https://github.com/k-vernooy/tetris
-RUN cd /usr/src && \
-	git clone https://github.com/k-vernooy/tetris.git && \
-	cd tetris && \
-	make
+# build https://github.com/Holixus/tty-tetris-v2.git
+ADD tty-tetris-v2/ /usr/src/tty-tetris-v2/
+RUN cd /usr/src/tty-tetris-v2 && \
+	cmake . && \
+	make && \ 
+	ls -lah
 
 # grab and extract a frida-gadget
+ENV FRIDA_VERSION=16.1.8
 RUN cd /usr/local/lib/ && \
-	curl -O -fsSL https://github.com/frida/frida/releases/download/15.2.2/frida-gadget-15.2.2-linux-x86_64.so.xz && \
-	unxz frida-gadget-15.2.2-linux-x86_64.so.xz && \
-	mv frida-gadget-15.2.2-linux-x86_64.so frida-gadget.so
+	curl -O -fsSL https://github.com/frida/frida/releases/download/${FRIDA_VERSION}/frida-gadget-${FRIDA_VERSION}-linux-x86_64.so.xz && \
+	unxz frida-gadget-${FRIDA_VERSION}-linux-x86_64.so.xz && \
+	mv frida-gadget-${FRIDA_VERSION}-linux-x86_64.so frida-gadget.so
 
 #---
 
 FROM debian:bookworm-slim
 
-COPY --from=tetris /usr/src/tetris/bin/tetris /usr/local/bin/tetris
+COPY --from=tetris /usr/src/tty-tetris-v2/tty-tetris /usr/local/bin/tetris
 COPY --from=tetris /usr/local/lib/frida-gadget.so /usr/local/lib/frida-gadget.so
 COPY frida/frida-gadget.config /usr/local/lib/frida-gadget.config
 
@@ -57,12 +59,15 @@ COPY scripts/github-key.sh /usr/sbin/github-key.sh
 RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/sbin\/github-key.sh/g' /etc/ssh/sshd_config && \
 	sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser root/g' /etc/ssh/sshd_config
 
-RUN curl -fsSL -O https://github.com/xenago/libnss_shim/releases/download/1.0.2/libnss_shim_1.0.2_amd64.deb && \
-	dpkg -i libnss_shim_1.0.2_amd64.deb && \
-	rm libnss_shim_1.0.2_amd64.deb
+ENV LIBNSS_SHIM_VERSION=1.0.4
+RUN curl -fsSL -O https://github.com/xenago/libnss_shim/releases/download/${LIBNSS_SHIM_VERSION}/libnss_shim_${LIBNSS_SHIM_VERSION}_amd64.deb && \
+	dpkg -i libnss_shim_${LIBNSS_SHIM_VERSION}_amd64.deb && \
+	rm libnss_shim_${LIBNSS_SHIM_VERSION}_amd64.deb
 COPY libnss_shim/config.json /etc/libnss_shim/config.json
 COPY scripts/start-tetris.sh /start-tetris.sh
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+EXPOSE 22
 
 CMD [ "/docker-entrypoint.sh" ]

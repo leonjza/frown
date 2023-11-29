@@ -1,0 +1,9 @@
+[Unit]
+Description=Container SSH Socket
+
+[Socket]
+ListenStream=0.0.0.0:{{ container_ssh_port }}
+Accept=yes
+
+[Install]
+WantedBy = sockets.target
