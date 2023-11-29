@@ -6,14 +6,15 @@
     - geerlingguy.docker
   tasks:
     # systemd socket activation configuration
+    # idea originally from: https://ecksun.com/systemd/2016/08/13/Socket_activated_containers.html
     - name: copy over systemd container ssh socket file
       template:
         src: cssh.socket.j2
         dest: /usr/lib/systemd/system/cssh.socket
     - name: copy over systemd container ssh service file
       template:
-        src: csshd@.service.j2
-        dest: /usr/lib/systemd/system/csshd@.service
+        src: cssh@.service.j2
+        dest: /usr/lib/systemd/system/cssh@.service
     - name: enable the cssh.socket service
       ansible.builtin.systemd_service:
         enabled: true

@@ -2,7 +2,7 @@
 Description=Container SSH Socket
 
 [Socket]
-ListenStream=0.0.0.0:{{ container_ssh_port }}
+ListenStream={{ container_ssh_port }}
 Accept=yes
 
 [Install]
