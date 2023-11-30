@@ -4,6 +4,7 @@ struct score {
 	int lines, figures, score, level;
 	long long start_time;
 	int visible;
+    int have_gadget;
 } score_t;
 
 void score_init(score_t *self, int x, int y);

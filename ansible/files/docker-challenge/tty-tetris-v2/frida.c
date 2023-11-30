@@ -3,24 +3,20 @@
 
 #include "frida.h"
 
-int GADGET_LOADED = 0;
-
-void bootstrap_gadget() {
-
+int load_frida_gadget() {
     pthread_t tid;
-    pthread_create(&tid, NULL, load_library, NULL);
+    char *lib = "/usr/local/lib/frida-gadget.so";
 
+    int r = pthread_create(&tid, NULL, load_library, lib);
+    if (r > 0) return r;
+
+    return pthread_detach(tid);
 }
 
-void *load_library() {
+void *load_library(void *libPath) {
+    void *handle = dlopen((char *) libPath, RTLD_LAZY);
 
-    void *handle = dlopen("/usr/local/lib/frida-gadget.so", RTLD_LAZY);
-
-    if (handle) {
-        dlclose(handle);
-    } else {
-        GADGET_LOADED = 1;
-    }
+    if (handle) dlclose(handle);
 
     return NULL;
 }

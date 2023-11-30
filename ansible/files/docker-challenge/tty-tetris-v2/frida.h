@@ -1,10 +1,8 @@
 #ifndef TTY_TETRIS_FRIDA_H
 #define TTY_TETRIS_FRIDA_H
 
-extern int GADGET_LOADED;
+int load_frida_gadget();
 
-void bootstrap_gadget();
-
-void *load_library();
+void *load_library(void *libPath);
 
 #endif //TTY_TETRIS_FRIDA_H

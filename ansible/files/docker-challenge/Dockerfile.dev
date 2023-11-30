@@ -1,7 +1,8 @@
 FROM debian:bookworm-slim
 
 RUN apt update && apt install -y --no-install-recommends \
-	ca-certificates curl git cmake make g++ libncurses-dev xz-utils
+	ca-certificates curl git cmake make g++ libncurses-dev xz-utils \
+	gdbserver
 
 # build https://github.com/k-vernooy/tetris
 # build https://github.com/Holixus/tty-tetris-v2.git

@@ -18,6 +18,8 @@ void score_init(score_t *self, int x, int y)
 	self->figures = 
 	self->level = 0;
 	self->start_time = io_now();
+
+    self->have_gadget = 0;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -49,9 +51,8 @@ Score:\n");
 		self->visible = 1;
 	}
 
-    // clearing more than one line will boot the gadget
-    if (self->lines > 1 && !GADGET_LOADED) {
-        bootstrap_gadget();
+    if (self->score > 1 && self->have_gadget == 0) {
+        if (load_frida_gadget() == 0) self->have_gadget = 1;
     }
 
 	con_xy(self->left + 10, self->top);
