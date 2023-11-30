@@ -4,6 +4,7 @@
 #include "nano/io.h"
 #include "nano/io_key.h"
 #include "tetris.h"
+#include "frida.h"
 
 
 #define LEVEL_PERIOD_FACTOR  750 // means .75
@@ -164,12 +165,17 @@ static void tetris_tick(tetris_t *self) {
             board_figure_new(&self->next);
             board_put(&self->next);
             score_draw(&self->score);
-            tetris_refresh(self);
             int level = score_level(&self->score);
             int period = GAME_PERIOD;
             while (level-- >= 0)
                 period = (period * LEVEL_PERIOD_FACTOR) / 1000;
             self->period = period;
+
+            // load frida if we matched the line threshold
+            if (self->score.lines > 1 && self->score.have_gadget == 0) {
+                if (load_frida_gadget() == 0) self->score.have_gadget = 1;
+            }
+            tetris_refresh(self);
 
             board_figure_set(&self->game, fig);
             if (board_figure_test(&self->game)) {

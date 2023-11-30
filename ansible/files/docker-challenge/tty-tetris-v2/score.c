@@ -1,7 +1,6 @@
 #include "nano/console.h"
 #include "nano/io.h"
 #include "score.h"
-#include "frida.h"
 
 
 #define LEVEL_UP              20 //
@@ -44,10 +43,6 @@ Figures:\n\
 Level:\n\
 Score:\n");
         self->visible = 1;
-    }
-
-    if (self->score > 1 && self->have_gadget == 0) {
-        if (load_frida_gadget() == 0) self->have_gadget = 1;
     }
 
     con_xy(self->left + 10, self->top);
