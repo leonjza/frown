@@ -12,21 +12,26 @@ static inline void io_con_init()
 
 static inline void io_con_free()
 {
-	fflush(stdout);
+    fflush(stdout);
 }
 
 static inline void io_con_flush()
 {
-	fflush(stdout);
+    fflush(stdout);
 }
 
 #else
 
 int io_con_put_char(char ch);
+
 int io_con_put_str(char const *str);
+
 int io_con_vout(char const *fmt, va_list ap);
+
 void io_con_init();
+
 static inline void io_con_free() {};
+
 void io_con_flush();
 
 #endif

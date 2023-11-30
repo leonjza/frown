@@ -19,42 +19,40 @@
 
 static void_fn_t *at_exits[MAX_ATEXIT_HANDLERS];
 static size_t ae_len;
+
 /* -------------------------------------------------------------------------- */
-void io_atexit(void_fn_t *fn)
-{
-	at_exits[ae_len++] = fn;
+void io_atexit(void_fn_t *fn) {
+    at_exits[ae_len++] = fn;
 }
 
 /* -------------------------------------------------------------------------- */
-void io_free()
-{
-	for (int i = 0; i < ae_len; ++i)
-		at_exits[i]();
+void io_free() {
+    for (int i = 0; i < ae_len; ++i)
+        at_exits[i]();
 
-	con_free();
-	io_timers_free();
-	io_streams_free();
+    con_free();
+    io_timers_free();
+    io_streams_free();
 }
 
 /* -------------------------------------------------------------------------- */
-int main(int argc, char *argv[])
-{
-	ae_len = 0;
-	signals_init();
-	srand((unsigned int)time(NULL));
-	io_timers_init();
-	io_streams_init();
-	con_init();
+int main(int argc, char *argv[]) {
+    ae_len = 0;
+    signals_init();
+    srand((unsigned int) time(NULL));
+    io_timers_init();
+    io_streams_init();
+    con_init();
 
-	atexit(io_free);
+    atexit(io_free);
 
-	start(argc, argv);
-	do {
-		int ret = io_streams_poll(io_get_timeout());
-		if (!ret || (ret < 0 && errno != EINTR))
-			return ret;
-	} while (1);
+    start(argc, argv);
+    do {
+        int ret = io_streams_poll(io_get_timeout());
+        if (!ret || (ret < 0 && errno != EINTR))
+            return ret;
+    } while (1);
 
-	return 0;
+    return 0;
 }
 

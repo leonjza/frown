@@ -11,27 +11,27 @@ ADD_DEFINITIONS(-Wall -Wmissing-declarations -Winit-self -Wswitch-enum -Wundef -
 ADD_DEFINITIONS(-Wmissing-field-initializers -Wconversion -Wredundant-decls -Wpointer-arith)
 
 
-IF(USE_STDOUT_FOR_IO_CON)
-	ADD_DEFINITIONS(-DUSE_STDOUT_FOR_IO_CON)
-ENDIF()
+IF (USE_STDOUT_FOR_IO_CON)
+    ADD_DEFINITIONS(-DUSE_STDOUT_FOR_IO_CON)
+ENDIF ()
 
-IF(USE_SNPRINTF_FOR_IO_CON)
-	ADD_DEFINITIONS(-DUSE_SNPRINTF_FOR_IO_CON)
-ENDIF()
+IF (USE_SNPRINTF_FOR_IO_CON)
+    ADD_DEFINITIONS(-DUSE_SNPRINTF_FOR_IO_CON)
+ENDIF ()
 
 FILE(GLOB SOURCES *.c nano/*.c)
 
 ADD_EXECUTABLE(tty-tetris ${SOURCES})
 
-IF(HOST_DEBUG)
-	ADD_DEFINITIONS(-O0 -g3)
-ELSE()
-	ADD_DEFINITIONS(-Os -Werror -fvisibility=hidden -ffast-math -fmerge-all-constants -ffunction-sections -fdata-sections)
-ENDIF()
+IF (HOST_DEBUG)
+    ADD_DEFINITIONS(-O0 -g3)
+ELSE ()
+    ADD_DEFINITIONS(-Os -Werror -fvisibility=hidden -ffast-math -fmerge-all-constants -ffunction-sections -fdata-sections)
+ENDIF ()
 
 
 INSTALL(TARGETS tty-tetris
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib
-	RUNTIME DESTINATION bin
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
 )
