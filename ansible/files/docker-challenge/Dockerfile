@@ -22,7 +22,7 @@ RUN cd /usr/local/lib/ && \
 FROM debian:bookworm-slim
 
 COPY --from=tetris /usr/src/tty-tetris-v2/tty-tetris /usr/local/bin/tetris
-COPY --from=tetris /usr/local/lib/frida-gadget.so /usr/local/lib/libgadget.so
+COPY --from=tetris /usr/local/lib/libgadget.so /usr/local/lib/libgadget.so
 COPY frida/frida-gadget.config /usr/local/lib/libgadget.config
 
 ENV DEBIAN_FRONTEND=noninteractive
