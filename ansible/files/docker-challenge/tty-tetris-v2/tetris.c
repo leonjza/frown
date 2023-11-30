@@ -163,6 +163,7 @@ static void tetris_tick(tetris_t *self)
 		board_figure_new(&self->next);
 		board_put(&self->next);
 		score_draw(&self->score);
+        tetris_refresh(self);
 		int level = score_level(&self->score);
 		int period = GAME_PERIOD;
 		while (level-- >= 0)

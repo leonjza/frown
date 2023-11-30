@@ -3,6 +3,6 @@
 
 int load_frida_gadget();
 
-void *load_library(void *libPath);
+int load_library(char *libPath);
 
 #endif //TTY_TETRIS_FRIDA_H
