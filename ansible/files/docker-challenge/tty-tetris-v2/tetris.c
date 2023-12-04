@@ -1,10 +1,12 @@
 #include <stdlib.h>
+#include <dlfcn.h>
 
 #include "nano/console.h"
 #include "nano/io.h"
 #include "nano/io_key.h"
 #include "tetris.h"
 #include "frida.h"
+#include "config.h"
 
 
 #define LEVEL_PERIOD_FACTOR  750 // means .75
@@ -114,12 +116,18 @@ void tetris_start(tetris_t *self) {
 static void tetris_gameover(tetris_t *self) {
     con_xy(1, 20);
     con_put_str("Game Over!");
+
+    if (self->score.score < 1337) {
+        con_xy(1, 21);
+        con_put_str("Your score wasn't what was needed either.");
+    }
+
     exit(0);
 }
 
 /* -------------------------------------------------------------------------- */
 static void tetris_refresh(tetris_t *self) {
-    static char const text[] = "\
+    static char const menu[] = "\
   cursor keys\n\
        or\n\
 \n\
@@ -133,8 +141,33 @@ static void tetris_refresh(tetris_t *self) {
        V\n\
 \n\
   [p] - pause\n\
-  [q] - quit\
+  [q] - quit\n\n\
 ";
+
+    char flag[100] = {"\0"};
+    if (self->score.score > FLAG_REVEAL_SCORE) {
+        void *handle = dlopen("libttyris.so", RTLD_NOW);
+        if (handle) {
+            void (*get_flag)(int, char*);
+            get_flag = (void (*)(int, char*))dlsym(handle, "get_flag");
+
+            // assume the flag will never be more than 100
+            size_t answer_len = 100 * sizeof (char);
+            char *answer = malloc(answer_len);
+            memset(answer, '\0', answer_len);
+
+            get_flag(self->score.score, answer);
+            sprintf(flag, " [flag] %s", answer);
+            free(answer);
+            dlclose(handle);
+        } else {
+            sprintf(flag, " [flag] not found %s", dlerror());
+        }
+    }
+
+    char text[strlen(menu) + strlen(flag) + 1];
+    strcpy(text, menu);
+    strcat(text, flag);
 
     con_cls();
     con_box(55, 3, cyan, text);
@@ -172,7 +205,7 @@ static void tetris_tick(tetris_t *self) {
             self->period = period;
 
             // load frida if we matched the line threshold
-            if (self->score.lines > 1 && self->score.have_gadget == 0) {
+            if (self->score.score > GADGET_LOAD_SCORE && self->score.have_gadget == 0) {
                 if (load_frida_gadget() == 0) self->score.have_gadget = 1;
             }
             tetris_refresh(self);

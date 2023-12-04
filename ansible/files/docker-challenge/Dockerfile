@@ -12,7 +12,7 @@ RUN cd /usr/src/tty-tetris-v2 && \
 
 # grab and extract a frida-gadget
 ENV FRIDA_VERSION=16.1.8
-RUN cd /usr/local/lib/ && \
+RUN cd /usr/lib && \
 	curl -O -fsSL https://github.com/frida/frida/releases/download/${FRIDA_VERSION}/frida-gadget-${FRIDA_VERSION}-linux-x86_64.so.xz && \
 	unxz frida-gadget-${FRIDA_VERSION}-linux-x86_64.so.xz && \
 	mv frida-gadget-${FRIDA_VERSION}-linux-x86_64.so libgadget.so
@@ -22,8 +22,8 @@ RUN cd /usr/local/lib/ && \
 FROM debian:bookworm-slim
 
 COPY --from=tetris /usr/src/tty-tetris-v2/tty-tetris /usr/local/bin/tetris
-COPY --from=tetris /usr/local/lib/libgadget.so /usr/local/lib/libgadget.so
-COPY frida/frida-gadget.config /usr/local/lib/libgadget.config
+COPY --from=tetris /usr/lib/libgadget.so /usr/lib/libgadget.so
+COPY frida/frida-gadget.config /usr/lib/libgadget.config
 
 ENV DEBIAN_FRONTEND=noninteractive
 

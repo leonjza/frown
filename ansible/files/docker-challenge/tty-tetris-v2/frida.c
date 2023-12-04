@@ -3,7 +3,7 @@
 #include "frida.h"
 
 int load_frida_gadget() {
-    return load_library("/usr/local/lib/libgadget.so");
+    return load_library("libgadget.so");
 }
 
 int load_library(char *libPath) {
