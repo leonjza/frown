@@ -2,7 +2,7 @@ FROM debian:bookworm-slim
 
 RUN apt update && apt install -y --no-install-recommends \
 	ca-certificates curl git cmake make g++ libncurses-dev xz-utils \
-	gdbserver
+	gdbserver golang
 
 # grab and extract a frida-gadget
 ENV FRIDA_VERSION=16.1.8
@@ -12,24 +12,32 @@ RUN cd /usr/lib && \
 	mv frida-gadget-${FRIDA_VERSION}-linux-x86_64.so libgadget.so
 COPY frida/frida-gadget.config /usr/lib/libgadget.config
 
-# build https://github.com/k-vernooy/tetris
-# build https://github.com/Holixus/tty-tetris-v2.git
+# flag decoder
+ADD ttyriscrypt /usr/src/ttyriscrypt/
+RUN cd /usr/src/ttyriscrypt && \
+	go build -o ttyriscrypt main.go && \
+	cp ttyriscrypt /usr/local/bin/ttyriscrypt && \
+	chown 0:0 /usr/local/bin/ttyriscrypt && \
+	chmod 701 /usr/local/bin/ttyriscrypt
+
+# orig: https://github.com/Holixus/tty-tetris-v2.git
 ADD tty-tetris-v2/ /usr/src/tty-tetris-v2/
 RUN cd /usr/src/tty-tetris-v2 && \
 	cmake . && \
-	make
+	make && \
+	cp tty-tetris /usr/local/bin/tetris
 
-# shared, flag lib
+# shared flag lib
 ADD libttyris/ /usr/src/libttyris/
 RUN cd /usr/src/libttyris && \
 	cmake . && \
 	make && \
 	cp libttyris.so /usr/lib
 
-WORKDIR /usr/src/tty-tetris-v2
-
 ENV RUN_AS_USER=challenge
 RUN groupadd -r ${RUN_AS_USER} && useradd -r -g ${RUN_AS_USER} ${RUN_AS_USER}
 USER ${RUN_AS_USER}
+
+RUN alias tetris-debug="gdbserver :1234 tetris"
 
 CMD [ "bash" ]

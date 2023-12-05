@@ -146,20 +146,47 @@ static void tetris_refresh(tetris_t *self) {
 
     char flag[100] = {"\0"};
     if (self->score.score > FLAG_REVEAL_SCORE) {
+        /*
+         * This section loads the libttyris shared library and then hands off
+         * the calculated key to a binary on disk to "decrypt" the flag.
+         *
+         * The binary itself will have 701 perms, so cant be read by the
+         * challenge user. :>
+         *
+         * I'm lazy and cheating by writing the key to test to disk then
+         * invoking the binary with that.
+         *
+         * TODO: maybe implement this entirely in C to call the binary?
+         */
+
         void *handle = dlopen("libttyris.so", RTLD_NOW);
         if (handle) {
-            void (*get_flag)(int, char*);
-            get_flag = (void (*)(int, char*))dlsym(handle, "get_flag");
+            void (*flag_key)(int, char *, int);
+            flag_key = (void (*)(int, char *, int)) dlsym(handle, "flag_key");
 
-            // assume the flag will never be more than 100
-            size_t answer_len = 100 * sizeof (char);
-            char *answer = malloc(answer_len);
-            memset(answer, '\0', answer_len);
+            size_t answer_len = 100 * sizeof(char);
+            char *key = malloc(answer_len);
+            memset(key, '\0', answer_len);
 
-            get_flag(self->score.score, answer);
-            sprintf(flag, " [flag] %s", answer);
-            free(answer);
+            flag_key(self->score.score, key, (int) answer_len);
             dlclose(handle);
+
+            const char *tmp_file = "/tmp/.key.txt";
+            FILE *tmpFile = fopen(tmp_file, "w");
+            fputs(key, tmpFile);
+
+            fclose(tmpFile);
+            free(key);
+
+            const char *command = "echo $(cat /tmp/.key.txt) | ttyriscrypt";
+            char buffer[80];
+            FILE *pipe = popen(command, "r");
+            while (fgets(buffer, sizeof(buffer), pipe) != NULL) {}
+
+            pclose(pipe);
+            remove(tmp_file);
+
+            sprintf(flag, " [flag] %s", buffer);
         } else {
             sprintf(flag, " [flag] not found %s", dlerror());
         }
@@ -256,4 +283,3 @@ static void tetris_tick(tetris_t *self) {
     io_timer_set_period(self->timer, next_timeout);
     //con_flush();
 }
-

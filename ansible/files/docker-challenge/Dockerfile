@@ -68,6 +68,10 @@ COPY scripts/start-tetris.sh /start-tetris.sh
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
+ENV RUN_AS_USER=challenge
+RUN groupadd -r ${RUN_AS_USER} && useradd -r -g ${RUN_AS_USER} ${RUN_AS_USER}
+USER ${RUN_AS_USER}
+
 EXPOSE 22
 
 CMD [ "/docker-entrypoint.sh" ]
