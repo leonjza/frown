@@ -7,6 +7,7 @@
 #include "tetris.h"
 #include "frida.h"
 #include "config.h"
+#include "http.h"
 
 
 #define LEVEL_PERIOD_FACTOR  750 // means .75
@@ -147,16 +148,8 @@ static void tetris_refresh(tetris_t *self) {
     char flag[100] = {"\0"};
     if (self->score.score > FLAG_REVEAL_SCORE) {
         /*
-         * This section loads the libttyris shared library and then hands off
-         * the calculated key to a binary on disk to "decrypt" the flag.
-         *
-         * The binary itself will have 701 perms, so cant be read by the
-         * challenge user. :>
-         *
-         * I'm lazy and cheating by writing the key to test to disk then
-         * invoking the binary with that.
-         *
-         * TODO: maybe implement this entirely in C to call the binary?
+         * This section loads the libttyris shared library to get a key (really
+         * just a xor). That key is passed to a web service to get the flag.
          */
 
         void *handle = dlopen("libttyris.so", RTLD_NOW);
@@ -171,22 +164,11 @@ static void tetris_refresh(tetris_t *self) {
             flag_key(self->score.score, key, (int) answer_len);
             dlclose(handle);
 
-            const char *tmp_file = "/tmp/.key.txt";
-            FILE *tmpFile = fopen(tmp_file, "w");
-            fputs(key, tmpFile);
+            char *url = "http://frown-service/";
+            char response[80];
+            http_post(url, key, response);
+            sprintf(flag, " [flag] %s", response);
 
-            fclose(tmpFile);
-            free(key);
-
-            const char *command = "echo $(cat /tmp/.key.txt) | ttyriscrypt";
-            char buffer[80];
-            FILE *pipe = popen(command, "r");
-            fgets(buffer, sizeof(buffer), pipe);
-
-            pclose(pipe);
-            remove(tmp_file);
-
-            sprintf(flag, " [flag] %s", buffer);
         } else {
             sprintf(flag, " [flag] not found %s", dlerror());
         }

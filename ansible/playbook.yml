@@ -27,20 +27,40 @@
         mode: preserve
         src: docker-challenge/
         dest: /root/docker-challenge
-    - name: build challenge docker container
+    - name: build main challenge docker container
       community.docker.docker_image:
-        name: '{{ container_name }}'
+        name: '{{ chal_container_name }}'
         build:
           path: /root/docker-challenge
+          dockerfile: Dockerfile.prod
         source: build
         force_source: true
-    - name: cleanup docker container artefacts after container build
-      ansible.builtin.file:
-        state: absent
-        path: /root/docker-challenge
+    - name: build flag service docker container
+      community.docker.docker_image:
+        name: '{{ flag_service_container_name }}'
+        build:
+          path: /root/docker-challenge
+          dockerfile: Dockerfile.flag
+        source: build
+        force_source: true
+    - name: ensure container network exists
+      community.docker.docker_network:
+        name: '{{ docker_network_name }}'
+    - name: ensure flag container is up and running
+      community.docker.docker_container:
+        name: frown-service
+        image: '{{ flag_service_container_name }}'
+        restart_policy: "always"
+        recreate: true
+        networks:
+          - name: '{{ docker_network_name }}'
     - name: prune any dangling containers
       community.docker.docker_prune:
         containers: true
         images: true
         images_filters:
           dangling: true
+    - name: cleanup docker container artefacts after container build
+      ansible.builtin.file:
+        state: absent
+        path: /root/docker-challenge

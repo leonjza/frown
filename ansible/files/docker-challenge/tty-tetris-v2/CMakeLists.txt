@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 PROJECT(tty-tetris)
 
-OPTION(HOST_DEBUG "Enable debug build" OFF)
+OPTION(HOST_DEBUG "Enable debug build" ON)
 OPTION(USE_STDOUT_FOR_IO_CON "Use simplified console output functions" OFF)
 OPTION(USE_SNPRINTF_FOR_IO_CON "Use stdlib snprintf instead of own version" OFF)
 
@@ -22,6 +22,7 @@ ENDIF ()
 FILE(GLOB SOURCES *.c nano/*.c)
 
 ADD_EXECUTABLE(tty-tetris ${SOURCES})
+target_link_libraries(tty-tetris curl)
 
 IF (HOST_DEBUG)
     ADD_DEFINITIONS(-O0 -g3)

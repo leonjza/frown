@@ -1,0 +1,18 @@
+FROM debian:bookworm-slim as flag
+
+RUN apt update && apt install -y --no-install-recommends \
+	ca-certificates curl git golang
+
+# flag decoder
+ADD ttyriscrypt /usr/src/ttyriscrypt/
+RUN cd /usr/src/ttyriscrypt && \
+	go build -o ttyriscrypt main.go
+
+#---
+FROM debian:bookworm-slim
+
+COPY --from=flag /usr/src/ttyriscrypt/ttyriscrypt /usr/local/bin/ttyriscrypt
+
+EXPOSE 80
+
+CMD [ "/usr/local/bin/ttyriscrypt" ]

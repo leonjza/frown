@@ -4,4 +4,11 @@ container_ssh_port: 24
 
 # the name of the challenge container that will be spawned
 # when a new ssh connection comes in
-container_name: frown:local
+chal_container_name: frown:local
+
+# name of the flag http server container that will live
+# in the background
+flag_service_container_name: frown-flag:local
+
+# name challenge relevant docker containers will connect to
+docker_network_name: frownnet

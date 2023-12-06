@@ -50,9 +50,9 @@ if len(sys.argv) > 1:
 
 # solve
 for x in range(0, 40000):
-	key = api.flagkey(x)
-	if 'flag' in (flag := api.exec(f'echo "{key}" | ttyriscrypt')):
+	if 'flag' in (flag := api.sendkey(api.flagkey(x))):
 		print(f'key: {x}, flag: {flag}')
 		break
 
 # print(api.flagkey(31337))
+# print(api.sendkey(api.flagkey(31337)))

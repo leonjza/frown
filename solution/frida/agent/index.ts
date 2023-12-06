@@ -1,4 +1,5 @@
 import fs from "fs";
+import http from "http";
 
 rpc.exports = {
   dir: (p: string) => fs.readdirSync(p),
@@ -50,6 +51,39 @@ rpc.exports = {
 
     const flag_value = flag.readUtf8String();
     return flag_value;
+  },
+  sendkey: (key: number) => {
+    return new Promise((resolve, reject) => {
+      const opts: http.RequestOptions = {
+        hostname: 'frown-service',
+        port: 80,
+        path: '/',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain',
+          'content-length': key.toString().length
+        }
+      };
+
+      const req = http.request(opts, (res) => {
+        let body = '';
+
+        res.on('data', (chunk) => {
+          body += chunk;
+        });
+
+        res.on('end', () => {
+          resolve(body);
+        });
+      });
+
+      req.on('error', (error) => {
+        reject(error);
+      });
+
+      req.write(key);
+      req.end();
+    });
   },
   exec: (c: string) => {
     const popen_ptr = Module.getExportByName(null, "popen");
