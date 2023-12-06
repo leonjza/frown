@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 PROJECT(tty-tetris)
 
-OPTION(HOST_DEBUG "Log to console" ON)
+OPTION(HOST_DEBUG "Enable debug build" OFF)
 OPTION(USE_STDOUT_FOR_IO_CON "Use simplified console output functions" OFF)
 OPTION(USE_SNPRINTF_FOR_IO_CON "Use stdlib snprintf instead of own version" OFF)
 

@@ -1,14 +1,7 @@
 FROM debian:bookworm-slim as tetris
 
 RUN apt update && apt install -y --no-install-recommends \
-	ca-certificates curl git cmake make g++ libncurses-dev xz-utils
-
-# build https://github.com/Holixus/tty-tetris-v2.git
-ADD tty-tetris-v2/ /usr/src/tty-tetris-v2/
-RUN cd /usr/src/tty-tetris-v2 && \
-	cmake . && \
-	make && \ 
-	ls -lah
+	ca-certificates curl git cmake make g++ libncurses-dev xz-utils golang
 
 # grab and extract a frida-gadget
 ENV FRIDA_VERSION=16.1.8
@@ -17,28 +10,52 @@ RUN cd /usr/lib && \
 	unxz frida-gadget-${FRIDA_VERSION}-linux-x86_64.so.xz && \
 	mv frida-gadget-${FRIDA_VERSION}-linux-x86_64.so libgadget.so
 
+# flag decoder
+ADD ttyriscrypt /usr/src/ttyriscrypt/
+RUN cd /usr/src/ttyriscrypt && \
+	go build -o ttyriscrypt main.go
+
+# orig: https://github.com/Holixus/tty-tetris-v2.git
+ADD tty-tetris-v2/ /usr/src/tty-tetris-v2/
+RUN cd /usr/src/tty-tetris-v2 && \
+	cmake . && \
+	make && \
+	ls -lah
+
+# shared flag lib
+ADD libttyris/ /usr/src/libttyris/
+RUN cd /usr/src/libttyris && \
+	cmake . && \
+	make
+
 #---
 
 FROM debian:bookworm-slim
 
 COPY --from=tetris /usr/src/tty-tetris-v2/tty-tetris /usr/local/bin/tetris
+COPY --from=tetris /usr/src/libttyris/libttyris.so /usr/lib/libttyris.so
+COPY --from=tetris /usr/src/ttyriscrypt/ttyriscrypt /usr/local/bin/ttyriscrypt
 COPY --from=tetris /usr/lib/libgadget.so /usr/lib/libgadget.so
 COPY frida/frida-gadget.config /usr/lib/libgadget.config
 
-ENV DEBIAN_FRONTEND=noninteractive
+# "secure" ttyriscrypt
+RUN chown 0:0 /usr/local/bin/ttyriscrypt && \
+	chmod 701 /usr/local/bin/ttyriscrypt
 
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y --no-install-recommends \
 	openssh-server curl ca-certificates \
 	&& apt-get autoremove -y && \
 	apt-get clean
 
 # create the default user we will use
-RUN useradd --create-home user && \
-	mkdir /home/user/.ssh && \
-	touch /home/user/.ssh/authorized_keys && \
-	chmod 600 /home/user/.ssh/authorized_keys && \
-	chown -R user:user /home/user/.ssh && \
-	touch /home/user/.hushlogin && \
+ENV RUN_AS_USER=user
+RUN useradd --create-home ${RUN_AS_USER} && \
+	mkdir /home/${RUN_AS_USER}/.ssh && \
+	touch /home/${RUN_AS_USER}/.ssh/authorized_keys && \
+	chmod 600 /home/${RUN_AS_USER}/.ssh/authorized_keys && \
+	chown -R ${RUN_AS_USER}:${RUN_AS_USER} /home/${RUN_AS_USER}/.ssh && \
+	touch /home/${RUN_AS_USER}/.hushlogin && \
 	# 'fix' ssh
 	mkdir /var/run/sshd
 
@@ -68,8 +85,7 @@ COPY scripts/start-tetris.sh /start-tetris.sh
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
-ENV RUN_AS_USER=challenge
-RUN groupadd -r ${RUN_AS_USER} && useradd -r -g ${RUN_AS_USER} ${RUN_AS_USER}
+# by default, run as a low priv user
 USER ${RUN_AS_USER}
 
 EXPOSE 22

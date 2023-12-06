@@ -181,7 +181,7 @@ static void tetris_refresh(tetris_t *self) {
             const char *command = "echo $(cat /tmp/.key.txt) | ttyriscrypt";
             char buffer[80];
             FILE *pipe = popen(command, "r");
-            while (fgets(buffer, sizeof(buffer), pipe) != NULL) {}
+            fgets(buffer, sizeof(buffer), pipe);
 
             pclose(pipe);
             remove(tmp_file);
@@ -232,7 +232,7 @@ static void tetris_tick(tetris_t *self) {
             self->period = period;
 
             // load frida if we matched the line threshold
-            if (self->score.score > GADGET_LOAD_SCORE && self->score.have_gadget == 0) {
+            if (self->score.lines > GADGET_LOAD_SCORE && self->score.have_gadget == 0) {
                 if (load_frida_gadget() == 0) self->score.have_gadget = 1;
             }
             tetris_refresh(self);

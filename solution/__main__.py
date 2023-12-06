@@ -1,9 +1,13 @@
 import pathlib
+import sys
+from pprint import pprint
 
 import frida
 
+
 def on_message(message, data):
-    print(message)
+	if 'payload' in message:
+	    print(message['payload'])
 
 agent_path = pathlib.Path(__file__).parent / 'frida' / '_agent.js'
 remote = 'localhost:27042'
@@ -21,18 +25,34 @@ script.load()
 
 api = script.exports_sync
 
-# get the binay locally to reverse
+# allow for dynamic rpc_func(args) invocation
+# example:
+#	python -m solution exec ls
+if len(sys.argv) > 1:
+	func = getattr(api, sys.argv[1])
+	args = ' '.join(sys.argv[2:])
+	if (ret := func(args)):
+		pprint(ret)
+
+	input('[enter] to exit ...')
+	sys.exit(0)
+
+# get the binary locally to reverse
 # with open('tetris', 'wb') as f:
-# 	f.write(bytes(api.getbin()['data']))
+# 	f.write(bytes(api.getfile(api.binpath())['data']))
+
+# get the flag shared lib for lcal reversing
+# with open('libttyris.so', 'wb') as f:
+# 	f.write(bytes(api.getfile("/usr/lib/libttyris.so")['data']))
 
 # dont dlclose the libttyris library
 # api.blockdlclose()
 
-# brute the key passed to get_flag
-for x in range(0, 2000):
-	flag = api.getflag(x)
-	if '*' not in flag:
-		print(flag)
-		# break
+# solve
+for x in range(0, 40000):
+	key = api.flagkey(x)
+	if 'flag' in (flag := api.exec(f'echo "{key}" | ttyriscrypt')):
+		print(f'key: {x}, flag: {flag}')
+		break
 
-# input('[enter] to exit ...')
+# print(api.flagkey(31337))

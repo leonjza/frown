@@ -34,7 +34,7 @@ RUN cd /usr/src/libttyris && \
 	make && \
 	cp libttyris.so /usr/lib
 
-ENV RUN_AS_USER=challenge
+ENV RUN_AS_USER=user
 RUN groupadd -r ${RUN_AS_USER} && useradd -r -g ${RUN_AS_USER} ${RUN_AS_USER}
 USER ${RUN_AS_USER}
 

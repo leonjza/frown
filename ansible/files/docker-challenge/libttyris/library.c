@@ -9,6 +9,7 @@ size_t flag_size() {
 
 void flag_key(int key, char *answer, int answer_len) {
     for (size_t i = 0; ((i < flag_size()) && (i < answer_len)); i++) {
-        answer[i] = (char) (FLAG[i] ^ key);
+        int t = FLAG[i] ^ key;
+        answer[i] = (char) t;
     }
 }

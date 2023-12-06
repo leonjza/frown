@@ -41,19 +41,22 @@ void score_draw(score_t *self) {
 Lines:\n\
 Figures:\n\
 Level:\n\
-Score:\n");
+Score:\n\
+Port:\n");
         self->visible = 1;
     }
 
     con_xy(self->left + 10, self->top);
     con_bold();
-    con_put("%4d", self->lines);
+    con_put("%5d", self->lines);
     con_lf();
-    con_put("%4d", self->figures);
+    con_put("%5d", self->figures);
     con_lf();
-    con_put("%4d", self->level + 1);
+    con_put("%5d", self->level + 1);
     con_lf();
-    con_put("%4d", self->score);
+    con_put("%5d", self->score);
+    con_lf();
+    con_put("%5d", self->have_gadget == 1 ? 27042 : 0);
     con_uncol();
 }
 
