@@ -45,14 +45,14 @@ if len(sys.argv) > 1:
 # with open('libttyris.so', 'wb') as f:
 # 	f.write(bytes(api.getfile("/usr/lib/libttyris.so")['data']))
 
-# dont dlclose the libttyris library
-# api.blockdlclose()
+# solve via node http
+# for x in range(0, 40000):
+# 	if 'flag' in (flag := api.sendkey(api.flagkey(x))):
+# 		print(f'key: {x}, flag: {flag}')
+# 		break
 
-# solve
+# solve via curl hook
 for x in range(0, 40000):
-	if 'flag' in (flag := api.sendkey(api.flagkey(x))):
+	if 'flag' in (flag := api.usecurl(api.flagkey(x))):
 		print(f'key: {x}, flag: {flag}')
 		break
-
-# print(api.flagkey(31337))
-# print(api.sendkey(api.flagkey(31337)))

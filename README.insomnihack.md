@@ -19,6 +19,7 @@ Author: @leonjza
 
 - [x] Build it
 - [ ] Tweak game parameters
+- [ ] Ensure binaries are stripped and `-Os`
 - [ ] Check publishing via ansible
 - [ ] Determine access method (removing pin to Github accounts)
 - [ ] Confirm resource needs
@@ -86,6 +87,14 @@ In addition, once a score of 500 or more is reached, the keyboard section will d
 - How can the player find out that there is a vulnerability (source code, weird behaviour, information leak, etc.)?
 - How to exploit the vulnerability?
 ```
+
+- SSH to the service
+- Play the game to load Frida
+- Connect a frida client
+- Enumerate the application
+- Download the main binary to your local machine via a frida script. use either frida-fs, or a script that implements `fopen()` et al.
+- Reverse the application to discover the flag key calculation in `tetris_refresh`.
+-
 
 ### Exploitation script
 

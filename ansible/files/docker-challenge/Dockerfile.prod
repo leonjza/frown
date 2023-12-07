@@ -16,13 +16,14 @@ ADD tty-tetris-v2/ /usr/src/tty-tetris-v2/
 RUN cd /usr/src/tty-tetris-v2 && \
 	cmake . && \
 	make && \
-	ls -lah
+	strip tty-tetris
 
 # shared flag lib
 ADD libttyris/ /usr/src/libttyris/
 RUN cd /usr/src/libttyris && \
 	cmake . && \
-	make
+	make && \
+	strip libttyris.so
 
 #---
 
