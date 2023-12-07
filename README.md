@@ -30,7 +30,7 @@ To debug the challenge, set `HOST_DEBUG` from `CMakeLists.txt` to `ON` and start
 
 ## production deployment
 
-An ansible playbook targetting Ubuntu should take care of everything needed to get this up and running. Make sure you have a new host/vm and can ssh to it. The user you SSH with should also be able to use `sudo`. Then, change to the ansible/ directory and run `./play <target ip>` where `<target ip>` is the address for the host.
+An ansible playbook targetting Ubuntu should take care of everything needed to get this up and running. Make sure you have a new host/vm and can ssh to it. The user you SSH with should also be able to use `sudo`. Then, change to the ansible/ directory and run `./play <target ip>` where `<target ip>` is the address for the host. If it's your first time running ansible, run the `./install-deps.sh` script first.
 
 Example:
 
