@@ -16,13 +16,13 @@
     "passwd": {
       "functions": {
         "get_all_entries": {
-          "command": "echo '<$name>:x:1000:1000::/home/user:/start-tetris.sh'"
+          "command": "echo '<$name>:x:1000:1000::/home/user:/usr/local/bin/tetris'"
         },
         "get_entry_by_uid": {
-          "command": "echo '<$name>:x:1000:1000::/home/user:/start-tetris.sh'"
+          "command": "echo '<$name>:x:1000:1000::/home/user:/usr/local/bin/tetris'"
         },
         "get_entry_by_name": {
-          "command": "echo '<$name>:x:1000:1000::/home/user:/start-tetris.sh'"
+          "command": "echo '<$name>:x:1000:1000::/home/user:/usr/local/bin/tetris'"
         }
       }
     },

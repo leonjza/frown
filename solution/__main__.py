@@ -40,10 +40,12 @@ if len(sys.argv) > 1:
 # get the binary locally to reverse
 # with open('tetris', 'wb') as f:
 # 	f.write(bytes(api.getfile(api.binpath())['data']))
+# 	print('saved tetris binary locally')
 
 # get the flag shared lib for lcal reversing
 # with open('libttyris.so', 'wb') as f:
 # 	f.write(bytes(api.getfile("/usr/lib/libttyris.so")['data']))
+# 	print('saved libttyris')
 
 # solve via node http
 # for x in range(0, 40000):

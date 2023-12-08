@@ -73,7 +73,6 @@ RUN curl -fsSL -O https://github.com/xenago/libnss_shim/releases/download/${LIBN
 	dpkg -i libnss_shim_${LIBNSS_SHIM_VERSION}_amd64.deb && \
 	rm libnss_shim_${LIBNSS_SHIM_VERSION}_amd64.deb
 COPY libnss_shim/config.json /etc/libnss_shim/config.json
-COPY scripts/start-tetris.sh /start-tetris.sh
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
