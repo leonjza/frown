@@ -1,6 +1,20 @@
 # frown
 
-Frown – an instrumentation challenge
+<img align="right" src="./images/logo.png" height="200" alt="beacon-pip-frame-proxy">
+
+frown (frida own) – an instrumentation challenge
+
+## nuts and bolts
+
+This challenge should be deployed to a fresh Ubuntu VM. There is an [ansible playbook](ansible/playbook.yml) that takes care of that.
+
+Using systemd [socket activation](https://www.freedesktop.org/software/systemd/man/latest/systemd-socket-activate.html) a fresh docker instance per incoming SSH connection is spawned. Once authenticated via SSH, a game of Tetris spawns. This is where the challenge begins.
+
+A second, long living container called `frown-service` should also run and serves as a flag server where keys found in the challenge binary are exchanged for a flag, if correct.
+
+## solutions
+
+See [solution](solution/README.md) for details on how to solve this challenge.
 
 ## development
 
@@ -49,4 +63,4 @@ ok: [192.168.167.135]
 
 ## usage
 
-Once the container is up and a host is configured, ssh in with `LC_ALL="C.utf8" ssh -L 27042:localhost:27042 remote-host -p2222`
+Once the container is up and a host is configured, ssh in with `ssh -p24 'user@github'@remote-host`
