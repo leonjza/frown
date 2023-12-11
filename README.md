@@ -2,8 +2,6 @@
 
 A modified version of [tty-tetris-v2](https://github.com/Holixus/tty-tetris-v2) to include a Frida focussed instrumentation challenge.
 
-<img align="right" src="./images/logo.png" height="200" alt="beacon-pip-frame-proxy">
-
 ```text
                         <! . . . . . . . . . .!>
                         <! . . . .[][] . . . .!>        cursor keys
@@ -30,6 +28,8 @@ A modified version of [tty-tetris-v2](https://github.com/Holixus/tty-tetris-v2) 
 ```
 
 ## nuts and bolts
+
+<img align="right" src="./images/logo.png" height="200" alt="beacon-pip-frame-proxy">
 
 This challenge should be deployed to a fresh Ubuntu VM. There is an [ansible playbook](ansible/playbook.yml) that takes care of that.
 
