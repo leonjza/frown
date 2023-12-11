@@ -1,6 +1,6 @@
 # frown – an instrumentation challenge
 
-A modified version of [tty-tetris-v2](https://github.com/Holixus/tty-tetris-v2) to include a Frida focussed instrumentation challenge.
+A modified version of [tty-tetris-v2](https://github.com/Holixus/tty-tetris-v2) (modified source [here](ansible/files/docker-challenge/tty-tetris-v2/)) to include a Frida focussed instrumentation challenge.
 
 ```text
                         <! . . . . . . . . . .!>
