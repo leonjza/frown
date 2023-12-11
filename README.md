@@ -1,8 +1,33 @@
-# frown
+# frown – an instrumentation challenge
+
+A modified version of [tty-tetris-v2](https://github.com/Holixus/tty-tetris-v2) to include a Frida focussed instrumentation challenge.
 
 <img align="right" src="./images/logo.png" height="200" alt="beacon-pip-frame-proxy">
 
-frown (frida own) – an instrumentation challenge
+```text
+                        <! . . . . . . . . . .!>
+                        <! . . . .[][] . . . .!>        cursor keys
+    Lines:        4     <! . . . .[][] . . . .!>             or
+    Figures:     18     <! . . . . . . . . . .!>
+    Level:        1     <! . . . . . . . . . .!>           rotate
+    Score:      313     <! . . . . .[Frida INFO] Listening on 127.0.0.1 TCP port 27042
+    Port:     27042     <! . . . . . . . . . .!>            [w]
+                        <! . . . . . . . . . .!>      <-[a] [s] [d]->
+                        <! . . . . . . . . . .!>
+             []         <! . . . . . . . . . .!>          [space]
+         [][][]         <! . . . . . . . . . .!>             |
+                        <! . . . . . . . . . .!>             V
+                        <! . . . . . . . . . .!>
+                        <! . . . . . . . . . .!>        [p] - pause
+                        <! . . . . . . . . . .!>        [q] - quit
+                        <! . . . . .[] . . . .!>
+                        <! . . . .[][][][] . .!>
+                        <![][][][][][][][][] .!>
+                        <![][][][][][][][][] .!>
+                        <![][][] .[][][][][][]!>
+                        <+--------------------+>
+                          \/\/\/\/\/\/\/\/\/\/
+```
 
 ## nuts and bolts
 
