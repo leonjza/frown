@@ -53,9 +53,10 @@ RUN useradd --create-home ${RUN_AS_USER} && \
 
 # We want to allow anyone to login. But in a small attempt to prevent
 # obvious abuse, (and as a bit of an excuse to play with it), we'll
-# limit SSH logins to valid github accounts. That means when you SSH
-# in with login set to your Github username, presenting your Github
-# private key should drop you in a shell as user.
+# limit SSH logins to valid Github/Gitlab accounts. That means when you
+# SSH in with a login set to your Github/Gitlab username, presenting your
+# appropriate private key should drop you in a shell as user. The username
+# format is use@vcs_type. eg: ssh -p24 'user@github'@challenge-server.
 
 # To do that, we configure sshd's AuthorizedKeysCommand to a script that
 # will download the keys a user has configured on Github and use those
@@ -64,7 +65,7 @@ RUN useradd --create-home ${RUN_AS_USER} && \
 #
 # [1] https://github.com/xenago/libnss_shim
 
-COPY scripts/github-key.sh /usr/sbin/github-key.sh
+COPY scripts/github-key.sh /usr/sbin/repo-key.sh
 COPY scripts/tetris.sh /usr/sbin/tetris.sh
 RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/sbin\/github-key.sh/g' /etc/ssh/sshd_config && \
 	sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser root/g' /etc/ssh/sshd_config
