@@ -65,7 +65,7 @@ RUN useradd --create-home ${RUN_AS_USER} && \
 #
 # [1] https://github.com/xenago/libnss_shim
 
-COPY scripts/github-key.sh /usr/sbin/repo-key.sh
+COPY scripts/repo-key.sh /usr/sbin/repo-key.sh
 COPY scripts/tetris.sh /usr/sbin/tetris.sh
 RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/sbin\/github-key.sh/g' /etc/ssh/sshd_config && \
 	sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser root/g' /etc/ssh/sshd_config
