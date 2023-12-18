@@ -67,7 +67,7 @@ RUN useradd --create-home ${RUN_AS_USER} && \
 
 COPY scripts/repo-key.sh /usr/sbin/repo-key.sh
 COPY scripts/tetris.sh /usr/sbin/tetris.sh
-RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/sbin\/github-key.sh/g' /etc/ssh/sshd_config && \
+RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/sbin\/repo-key.sh/g' /etc/ssh/sshd_config && \
 	sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser root/g' /etc/ssh/sshd_config
 
 ENV LIBNSS_SHIM_VERSION=1.0.4
