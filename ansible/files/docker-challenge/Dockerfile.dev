@@ -26,6 +26,10 @@ RUN cd /usr/src/libttyris && \
 	make && \
 	cp libttyris.so /usr/lib
 
+# scripts
+COPY scripts/repo-key.sh /usr/sbin/repo-key.sh
+COPY scripts/tetris.sh /usr/sbin/tetris.sh
+
 RUN alias tetris-debug="gdbserver :1234 tetris"
 
 CMD [ "bash" ]
