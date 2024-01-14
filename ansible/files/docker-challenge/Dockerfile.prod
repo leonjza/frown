@@ -29,6 +29,9 @@ RUN cd /usr/src/libttyris && \
 
 FROM debian:bookworm-slim
 
+# "any password auth method", read below for more info
+ARG allow_any_password=false
+
 COPY --from=tetris /usr/src/tty-tetris-v2/tty-tetris /usr/local/bin/tetris
 COPY --from=tetris /usr/src/libttyris/libttyris.so /usr/lib/libttyris.so
 COPY --from=tetris /usr/lib/libgadget.so /usr/lib/libgadget.so
@@ -42,7 +45,8 @@ RUN apt update && apt install -y --no-install-recommends \
 
 # create the default user we will use
 ENV RUN_AS_USER=user
-RUN useradd --create-home ${RUN_AS_USER} && \
+COPY scripts/tetris.sh /usr/sbin/tetris.sh
+RUN useradd -s /usr/sbin/tetris.sh --create-home ${RUN_AS_USER} && \
 	mkdir /home/${RUN_AS_USER}/.ssh && \
 	touch /home/${RUN_AS_USER}/.ssh/authorized_keys && \
 	chmod 600 /home/${RUN_AS_USER}/.ssh/authorized_keys && \
@@ -51,9 +55,9 @@ RUN useradd --create-home ${RUN_AS_USER} && \
 	# 'fix' ssh
 	mkdir /var/run/sshd
 
-# We want to allow anyone to login. But in a small attempt to prevent
-# obvious abuse, (and as a bit of an excuse to play with it), we'll
-# limit SSH logins to valid Github/Gitlab accounts. That means when you
+# We want to allow anyone to login. In a small attempt to prevent obvious
+# abuse, (and as a bit of an excuse to play with it), we'll limit SSH
+# logins to valid Github/Gitlab accounts by default. That means when you
 # SSH in with a login set to your Github/Gitlab username, presenting your
 # appropriate private key should drop you in a shell as user. The username
 # format is use@vcs_type. eg: ssh -p24 'user@github'@challenge-server.
@@ -65,16 +69,17 @@ RUN useradd --create-home ${RUN_AS_USER} && \
 #
 # [1] https://github.com/xenago/libnss_shim
 
-COPY scripts/repo-key.sh /usr/sbin/repo-key.sh
-COPY scripts/tetris.sh /usr/sbin/tetris.sh
-RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/sbin\/repo-key.sh/g' /etc/ssh/sshd_config && \
-	sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser root/g' /etc/ssh/sshd_config
+# this behaviour can be disabled by setting allow_any_password to true which
+# means that in addition to the github/gitlab key method, any password will
+# be accepted for the "user" user. in that case, the ssh command will be:
+# ssh -p24 user@challenge-server
 
-ENV LIBNSS_SHIM_VERSION=1.0.4
-RUN curl -fsSL -O https://github.com/xenago/libnss_shim/releases/download/${LIBNSS_SHIM_VERSION}/libnss_shim_${LIBNSS_SHIM_VERSION}_amd64.deb && \
-	dpkg -i libnss_shim_${LIBNSS_SHIM_VERSION}_amd64.deb && \
-	rm libnss_shim_${LIBNSS_SHIM_VERSION}_amd64.deb
-COPY libnss_shim/config.json /etc/libnss_shim/config.json
+COPY scripts/repo-key.sh /usr/sbin/repo-key.sh
+COPY libnss_shim/config.json /tmp/libnss_shim_config.json
+COPY scripts/configure-auth-method.sh /tmp/configure-auth-method.sh
+
+RUN /tmp/configure-auth-method.sh ${allow_any_password} && \
+	rm /tmp/configure-auth-method.sh
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 

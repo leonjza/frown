@@ -5,6 +5,21 @@
     # a sane way to get docker installed and configured
     - geerlingguy.docker
   tasks:
+    # i dont know why, but pam configuration changes the way im doing it
+    # here causes dns lookup issues. it just makes making new ssh sessions
+    # take longer so as a hack we'll just set the docker daemons dns.
+    # yeah, no idea. whatever.
+    - name: configure docker daemon dns
+      ansible.builtin.copy:
+        mode: preserve
+        src: daemon.json
+        dest: /etc/docker/daemon.json
+    - name:
+      ansible.builtin.systemd_service:
+        state: restarted
+        daemon_reload: true
+        name: docker
+
     # systemd socket activation configuration
     # idea originally from: https://ecksun.com/systemd/2016/08/13/Socket_activated_containers.html
     - name: copy over systemd container ssh socket file
@@ -33,6 +48,8 @@
         build:
           path: /root/docker-challenge
           dockerfile: Dockerfile.prod
+          args:
+            allow_any_password: '{{ allow_any_password }}'
         source: build
         force_source: true
     - name: build flag service docker container
