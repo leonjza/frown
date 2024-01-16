@@ -30,7 +30,8 @@ RUN cd /usr/src/libttyris && \
 FROM debian:bookworm-slim
 
 # "any password auth method", read below for more info
-ARG allow_any_password=false
+ARG local_auth=false
+ARG local_auth_password=
 
 COPY --from=tetris /usr/src/tty-tetris-v2/tty-tetris /usr/local/bin/tetris
 COPY --from=tetris /usr/src/libttyris/libttyris.so /usr/lib/libttyris.so
@@ -60,8 +61,8 @@ RUN useradd -s /usr/sbin/tetris.sh --create-home ${RUN_AS_USER} && \
 # logins to valid Github/Gitlab accounts by default. That means when you
 # SSH in with a login set to your Github/Gitlab username, presenting your
 # appropriate private key should drop you in a shell as user. The username
-# format is use@vcs_type. eg: ssh -p24 'user@github'@challenge-server.
-
+# format is use@vcs_type. eg:
+#	ssh -p24 'user@github'@challenge-server.
 # To do that, we configure sshd's AuthorizedKeysCommand to a script that
 # will download the keys a user has configured on Github and use those
 # for public key authentication. Next, we use [1] libnss_shim to "fake"
@@ -69,16 +70,16 @@ RUN useradd -s /usr/sbin/tetris.sh --create-home ${RUN_AS_USER} && \
 #
 # [1] https://github.com/xenago/libnss_shim
 
-# this behaviour can be disabled by setting allow_any_password to true which
-# means that in addition to the github/gitlab key method, any password will
-# be accepted for the "user" user. in that case, the ssh command will be:
-# ssh -p24 user@challenge-server
+# this behaviour can be disabled by setting local_auth to true which
+# means that a password will need to be shared (as set via local_auth_password)
+# for the "user" user. in that case, the ssh command will be:
+# 	ssh -p24 user@challenge-server
 
 COPY scripts/repo-key.sh /usr/sbin/repo-key.sh
 COPY libnss_shim/config.json /tmp/libnss_shim_config.json
 COPY scripts/configure-auth-method.sh /tmp/configure-auth-method.sh
 
-RUN /tmp/configure-auth-method.sh ${allow_any_password} && \
+RUN /tmp/configure-auth-method.sh ${local_auth} ${local_auth_password} && \
 	rm /tmp/configure-auth-method.sh
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh

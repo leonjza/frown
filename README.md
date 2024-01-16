@@ -33,7 +33,7 @@ A modified version of [tty-tetris-v2](https://github.com/Holixus/tty-tetris-v2) 
 
 This challenge should be deployed to a fresh Ubuntu VM. There is an [ansible playbook](ansible/playbook.yml) that takes care of that.
 
-Using systemd [socket activation](https://www.freedesktop.org/software/systemd/man/latest/systemd-socket-activate.html) a fresh docker instance per incoming SSH connection is spawned. Once authenticated via SSH, a game of Tetris spawns. This is where the challenge begins.
+Using systemd [socket activation](https://www.freedesktop.org/software/systemd/man/latest/systemd-socket-activate.html) a fresh docker instance per incoming SSH connection is spawned. Once authenticated via SSH, a game of Tetris spawns in that container. This is where the challenge begins.
 
 A second, long living container called `frown-service` should also run and serves as a flag server where keys found in the challenge binary are exchanged for a flag, if correct.
 
@@ -69,7 +69,7 @@ To debug the challenge, set `HOST_DEBUG` from `CMakeLists.txt` to `ON` and start
 
 ## production deployment
 
-An ansible playbook targetting Ubuntu should take care of everything needed to get this up and running. Make sure you have a new host/vm and can ssh to it. The user you SSH with should also be able to use `sudo`. Then, change to the ansible/ directory and run `./play <target ip>` where `<target ip>` is the address for the host. If it's your first time running ansible, run the `./install-deps.sh` script first.
+An ansible playbook targetting Ubuntu should take care of everything needed to get this up and running. Make sure you have a new host/vm and can ssh to it. The user you SSH with should also be able to use `sudo`. Then, change to the ansible/ directory and run `./play <target ip>` where `<target ip>` is the address for the host. If it's your first time running ansible, run the `./install-deps.sh` script first (ideally in a fresh venv).
 
 Example:
 
@@ -86,6 +86,14 @@ ok: [192.168.167.135]
 ...
 ```
 
+If you want to configure local authentication (skipping the tie in with GitHub / Gitlab accounts), the password can for the `user` user account can be set [here](ansible/group_vars/all.yml).
+
 ## usage
 
-Once the container is up and a host is configured, ssh in with `ssh -p24 'user@github'@remote-host`
+The challenge can be configured in two ways for initial authentication. The primary (and default method) is to allow users that authenticate using any valid GitHub / Gitlab SSH key. This means the user needs to have their appropriate private key ready, while authenticating to the game SSH'd service. For local only authentication, the username to use is `user`.
+
+Example `ssh` commands would therefore be:
+
+- `ssh -p24 'user@github'@remote-host`
+- `ssh -p24 'myuser@gitlab'@remote-host`
+- `ssh -p24 user@remote-host` (local auth mode, password set in ansible variables file)

@@ -14,6 +14,7 @@ flag_service_container_name: frown-flag:local
 docker_network_name: frownnet
 
 # by default we force users to auth using a github/gitlab key.
-# setting this to true will remove that restrictino making it
-# possible to authenticate as the "user" user with any password
-allow_any_password: true
+# setting this to true will remove that restriction making it
+# possible to authenticate as the "user" with a configured pass.
+local_auth: true
+local_auth_password: 1nsomn1h4cker

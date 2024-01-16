@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# if "allow_any_password" is set to true in ansible (and by extension via a docker build arg),
+# if "local_auth" is set to true in ansible (and by extension via a docker build arg),
 # update the pam.d's common-auth configuration to allow the "user" user to authenticate using
 # any password.
 
-if [ "${1,,}" == "false" ]; then
-	echo "allow_any_password is set to false, configuring github/gitlab auth method"
+local_auth=$1
+local_auth_password=$2
+
+if [ "${local_auth,,}" == "false" ]; then
+	echo "local_auth is set to false, configuring github/gitlab auth method"
 
 	# use the repo-key script as the AuthorizedKeysCommand
 	sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/sbin\/repo-key.sh/g' /etc/ssh/sshd_config
@@ -19,13 +22,12 @@ if [ "${1,,}" == "false" ]; then
 
 	# move the config file in place
 	mv /tmp/libnss_shim_config.json /etc/libnss_shim/config.json
-else
-	echo "allow_any_password is set to true. updating pam to accept any password for the 'user' user"
 
-	# add a pam control
-	sed -i '/^auth[[:space:]]\+\[success=1[[:space:]]\+default=ignore][[:space:]]\+pam_unix\.so[[:space:]]\+nullok$/{
-	s//auth    [success=2 default=ignore]      pam_unix.so nullok\nauth    [success=1 default=ignore]      pam_succeed_if.so user = user/
-	}' /etc/pam.d/common-auth
+else
+
+	echo "local_auth is set to true. setting password for the 'user' user"
+	echo "user:${local_auth_password}" | chpasswd
+
 fi
 
 echo "done"
