@@ -55,6 +55,6 @@ if len(sys.argv) > 1:
 
 # solve via curl hook
 for x in range(0, 40000):
-	if 'flag' in (flag := api.usecurl(api.flagkey(x))):
+	if 'INS' in (flag := api.usecurl(api.flagkey(x))):
 		print(f'key: {x}, flag: {flag}')
 		break
