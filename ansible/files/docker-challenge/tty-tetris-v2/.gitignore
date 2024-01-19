@@ -58,7 +58,6 @@ CMakeScripts
 Makefile
 cmake_install.cmake
 install_manifest.txt
-config.h
 bin/
 tty-tetris
 .idea/
