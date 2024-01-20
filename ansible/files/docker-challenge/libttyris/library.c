@@ -10,6 +10,11 @@ size_t flag_size() {
 void flag_key(int key, char *answer, int answer_len) {
     for (size_t i = 0; ((i < flag_size()) && (i < answer_len)); i++) {
         int t = FLAG[i] ^ key;
-        answer[i] = (char) t;
+
+        if ((t > 0) && (t < 255)) {
+            answer[i] = (char) t;
+        } else {
+            answer[i] = 0;
+        }
     }
 }
