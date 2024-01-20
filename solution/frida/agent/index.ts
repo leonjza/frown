@@ -46,7 +46,7 @@ rpc.exports = {
 
         send(`tetris_t=${tetris_t}, score_t=${score_t}, score=${score_ptr.readInt()}`);
 
-        score_ptr.writeInt(9197);
+        score_ptr.writeInt(9179);
       }
     });
   },
