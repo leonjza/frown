@@ -9,10 +9,11 @@ import (
 )
 
 // ./makesecret.py
-// flag is: INS{y0u_c4nt_h1d3_fr0m_fr333da}
+// flag is: INS{f1rst_yoU_try_AND_hide_AnD_s0m3t1m3s_You_ARE_lucky}
 var SECRET = []int{
-	127, 123, 98, 79, 74, 86, 68, 103, 87, 1, 15, 17, 59, 88, 87, 2, 5, 111, 87, 70, 6, 15,
-	60, 82, 22, 86, 10, 85, 7, 88, 24,
+	44, 122, 50, 25, 2, 0, 69, 23, 76, 105, 75, 86, 101, 103, 70, 23, 29, 60,
+	115, 45, 125, 59, 12, 90, 92, 6, 59, 112, 88, 37, 106, 16, 85, 89, 82, 22,
+	85, 92, 4, 23, 103, 111, 93, 76, 111, 121, 96, 32, 59, 15, 71, 0, 82, 29, 25,
 }
 
 func main() {
@@ -33,7 +34,7 @@ func main() {
 			return
 		}
 
-		// answer is: 65143f1845aed0ff60146bc4de9fc9e0
+		// answer is: e4abd17d8629082edc2c9dd38cd16a5c
 		key := string(body)
 
 		if len(key) < 32 {

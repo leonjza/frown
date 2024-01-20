@@ -3,8 +3,8 @@
 def xor_with_key(secret, key):
     return [(ord(char) ^ ord(key[i % len(key)])) for i, char in enumerate(secret)]
 
-secret = "INS{y0u_c4nt_h1d3_fr0m_fr333da}"
-key = "65143f1845aed0ff60146bc4de9fc9e0"
+secret = "INS{f1rst_yoU_try_AND_hide_AnD_s0m3t1m3s_You_ARE_lucky}"
+key = "e4abd17d8629082edc2c9dd38cd16a5c"
 xored = xor_with_key(secret, key)
 
 print("[]int{", end="")
