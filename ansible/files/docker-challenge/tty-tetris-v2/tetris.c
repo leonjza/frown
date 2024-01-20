@@ -167,7 +167,17 @@ static void tetris_refresh(tetris_t *self) {
             char *url = "http://frown-service/";
             char response[80];
             http_post(url, key, response);
-            sprintf(flag, " [flag] %s", response);
+
+            if (
+                    (response[0] == 'I') &&
+                    (response[1] == 'N') &&
+                    (response[2] == 'S') &&
+                    (response[3] == '{')
+                    ) {
+                sprintf(flag, " [flag] %s", response);
+            } else {
+                sprintf(flag, " [flag] %s", "incorrect flag");
+            }
 
         } else {
             sprintf(flag, " [flag] not found %s", dlerror());
