@@ -4,6 +4,7 @@ Description=Container SSH Socket
 [Socket]
 ListenStream={{ container_ssh_port }}
 Accept=yes
+MaxConnections=1024
 
 [Install]
 WantedBy = sockets.target
